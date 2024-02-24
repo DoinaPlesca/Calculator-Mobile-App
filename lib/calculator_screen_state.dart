@@ -11,27 +11,48 @@ import 'operation_command.dart';
 
 class CalculatorScreenState extends State<CalculatorScreen> {
   final StackCalculator _calculator = StackCalculator();
-  String _input = ''; // Updated to mutable variable
+  String _input = '';
 
-  void _handleInput(String value) {
+  double _firstNumber = 0.0;
+  double _secondNumber = 0.0;
+  double _result = 0.0;
+
+ void _handleButtonPress(String value) {
     setState(() {
       if (_isOperator(value)) {
+        // Execute operator command
         _calculator.execute(OperationCommand(value));
+        // Update display with result
+        _firstNumber = _calculator.stack.isNotEmpty ? _calculator.stack.last : 0.0;
+        _secondNumber = 0.0; // Reset second number for next input
+      } else if (value == 'C') {
+        // Clear button: Reset calculator and display
+        _calculator.clear();
+        _firstNumber = 0.0;
+        _secondNumber = 0.0;
+        _result = 0.0;
+      } else if (value == '=') {
+        // Calculate result
+        _result = _calculator.stack.isNotEmpty ? _calculator.stack.last : 0.0;
+        // Clear stack
+        _calculator.clear();
+        // Update display with result
+        _firstNumber = _result;
+        _secondNumber = 0.0;
       } else {
-        if (value == '.') {
-          // If the input value is a decimal point
-          // and the current input doesn't already contain a decimal point,
-          // add the decimal point to the input.
-          if (!_input.contains('.')) { // Updated to check _input
-            _input += value; // Updated to append to _input
-          }
+        // If the input is empty or if the last input is an operator, start a new input
+        if (_input.isEmpty || _isOperator(_input[_input.length - 1])) {
+          _input = value;
+          _firstNumber = double.parse(_input); // Update first number with pressed number
         } else {
-          // If the input value is a number, add it to the input.
-          _input += value; // Updated to append to _input
+          _input += value; // Accumulate input digits
+          _secondNumber = double.parse(_input); // Update second number with pressed number
         }
       }
     });
   }
+
+
 
   bool _isOperator(String value) {
     return value == '+' || value == '-' || value == '*' || value == '/';
@@ -48,57 +69,100 @@ class CalculatorScreenState extends State<CalculatorScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Expanded(
-              child: Container(
-                alignment: Alignment.bottomRight,
-                child: Text(
-                  _calculator.stackToString() + _input, // Display stack and input
-                  style: const TextStyle(fontSize: 24.0),
-                ),
-              ),
-            ),
+            _buildDisplayArea(),
+
             const SizedBox(height: 20),
-            Wrap(
-              spacing: 8.0,
-              runSpacing: 8.0,
-              children: <Widget>[
-                _buildButton('7'),
-                _buildButton('8'),
-                _buildButton('9'),
-                _buildButton('+'),
-                _buildButton('4'),
-                _buildButton('5'),
-                _buildButton('6'),
-                _buildButton('-'),
-                _buildButton('1'),
-                _buildButton('2'),
-                _buildButton('3'),
-                _buildButton('*'),
-                _buildButton('0'),
-                _buildButton('.'),
-                _buildButton('='),
-                _buildButton('/'),
-              ],
-            ),
+            _buildButtonRow(),
           ],
         ),
       ),
     );
   }
 
+  Widget _buildDisplayArea() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8.0),
+          decoration: BoxDecoration(
+            border: Border.all(),
+          ),
+          child: Text(
+            'First Number: $_firstNumber',
+            textAlign: TextAlign.right,
+            style: const TextStyle(fontSize: 20.0),
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.all(8.0),
+          decoration: BoxDecoration(
+            border: Border.all(),
+          ),
+          child: Text(
+            'Second Number: $_secondNumber',
+            textAlign: TextAlign.right,
+            style: const TextStyle(fontSize: 20.0),
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.all(8.0),
+          decoration: BoxDecoration(
+            border: Border.all(),
+          ),
+          child: Text(
+            'Result: $_result',
+            textAlign: TextAlign.right,
+            style: const TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+          ),
+        ),
+      ],
+    );
+  }
+
+
+
+  Widget _buildButtonRow() {
+    return Wrap(
+      spacing: 8.0,
+      runSpacing: 8.0,
+      children: <Widget>[
+        for (var value in [
+          '7',
+          '8',
+          '9',
+          '+',
+          '4',
+          '5',
+          '6',
+          '-',
+          '1',
+          '2',
+          '3',
+          '*',
+          '0',
+          '.',
+          'Enter',
+          'C',
+          'X',
+          '='
+        ])
+          _buildButton(value),
+      ],
+    );
+  }
+
   Widget _buildButton(String value) {
     return MaterialButton(
-      onPressed: () {
-        _handleInput(value);
-      },
+      onPressed: () => _handleButtonPress(value),
+      color: value == 'C' || value == 'X' ? Colors.red : Colors.blue,
+      textColor: Colors.white,
+      minWidth: 80.0,
+      height: 80.0,
       child: Text(
         value,
         style: const TextStyle(fontSize: 20.0),
       ),
-      color: Colors.blue,
-      textColor: Colors.white,
-      minWidth: 80.0,
-      height: 80.0,
     );
   }
 }

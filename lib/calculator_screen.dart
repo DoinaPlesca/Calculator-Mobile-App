@@ -6,8 +6,6 @@ import 'calculator_screen_state.dart';
 ///allowing Flutter to efficiently update the UI when changes occur.
 
 class CalculatorScreen extends StatefulWidget {
-
-
   const CalculatorScreen({Key? key}) : super(key: key);
 
   @override

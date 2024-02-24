@@ -11,6 +11,6 @@ class OperationCommand implements Command {
 
   @override
   void execute(StackCalculator calculator) {
-    calculator.calculate(operator);
+    calculator.calculateResult(operator);
   }
 }
