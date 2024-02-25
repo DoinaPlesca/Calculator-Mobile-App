@@ -1,14 +1,13 @@
+import 'package:calculator/push_command.dart';
 import 'package:calculator/stack_calculator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'calculator_screen.dart';
 import 'operation_command.dart';
 
-
 /// this class manages the state of the CalculatorScreen widget,
 /// handles user input, updates the calculator's stack,
 /// and builds the user interface for the calculator screen.
-
 
 class CalculatorScreenState extends State<CalculatorScreen> {
   final StackCalculator _calculator = StackCalculator();
@@ -18,7 +17,7 @@ class CalculatorScreenState extends State<CalculatorScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Calculator'),
+        title: const Text('Calculator'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -47,12 +46,14 @@ class CalculatorScreenState extends State<CalculatorScreen> {
         Text(
           'Input: $_input',
           textAlign: TextAlign.right,
-          style: const TextStyle(fontSize: 20.0),
+          style: const TextStyle(
+              fontSize: 23.0, color: Colors.white, fontWeight: FontWeight.bold),
         ),
         Text(
           'Stack: ${_calculator.stackToString()}',
           textAlign: TextAlign.right,
-          style: const TextStyle(fontSize: 20.0),
+          style: const TextStyle(
+              fontSize: 23.0, color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ],
     );
@@ -65,41 +66,74 @@ class CalculatorScreenState extends State<CalculatorScreen> {
       crossAxisSpacing: 8.0,
       mainAxisSpacing: 8.0,
       children: [
-        ..._buildNumberButtons(),
-        ..._buildOperatorButtons(),
+        _buildButton('C'),
+        _buildButton('x2'),
+        _buildButton('%'),
+        _buildButton('/'),
+        _buildButton('7'),
+        _buildButton('8'),
+        _buildButton('9'),
+        _buildButton('*'),
+        _buildButton('4'),
+        _buildButton('5'),
+        _buildButton('6'),
+        _buildButton('-'),
+        _buildButton('1'),
+        _buildButton('2'),
+        _buildButton('3'),
+        _buildButton('+'),
+        _buildUndoButton(),
+        _buildButton('0'),
+        _buildButton('.'),
         _buildEnterButton(),
-        _buildClearButton(),
       ],
     );
-  }
-
-  List<Widget> _buildNumberButtons() {
-    return List.generate(
-      10,
-          (index) => _buildButton(index.toString()),
-    );
-  }
-
-  List<Widget> _buildOperatorButtons() {
-    return ['+', '-', '*', '/'].map((op) => _buildButton(op)).toList();
   }
 
   Widget _buildEnterButton() {
     return _buildButton('Enter');
   }
 
-  Widget _buildClearButton() {
-    return _buildButton('C');
+  Widget _buildUndoButton() {
+    return _buildButton('Undo');
   }
 
   Widget _buildButton(String value) {
+    Color? buttonColor;
+    buttonColor = Colors.grey[300];
+
+    Color textColor = Colors.black;
+    if (value == 'C') {
+      textColor = Colors.red;
+    }
+
+    if (value == 'Enter') {
+      buttonColor = Colors.orange;
+    } else if (value == 'C' ||
+        value == '%' ||
+        value == 'x2' ||
+        value == '/' ||
+        value == '+' ||
+        value == '-' ||
+        value == '*' ||
+        value == '.' ||
+        value == 'Undo') {
+      buttonColor = Colors.grey[700];
+    }
+
     return MaterialButton(
-      onPressed: () => _handleButtonPress(value),
-      color: Colors.grey[300],
-      textColor: Colors.black,
+      onPressed: () {
+        if (value == 'Undo') {
+          _handleUndo();
+        }else {
+          _handleButtonPress(value);
+        }
+      },
+      color: buttonColor,
+      textColor: textColor,
       child: Text(
         value,
-        style: const TextStyle(fontSize: 20.0),
+        style: const TextStyle(fontSize: 21.0),
       ),
     );
   }
@@ -110,12 +144,18 @@ class CalculatorScreenState extends State<CalculatorScreen> {
         _calculator.execute(OperationCommand(value));
       } else if (value == 'Enter') {
         if (_input.isNotEmpty) {
-          _calculator.push(double.parse(_input));
+          double inputValue = double.parse(_input);
+          _calculator.execute(PushCommand(inputValue));
           _input = '';
         }
       } else if (value == 'C') {
         _calculator.clear();
         _input = '';
+      } else if (value == '%') {
+        if (_calculator.stack.isNotEmpty) {
+          double percentage = _calculator.stack.last / 100;
+          _calculator.stack[_calculator.stack.length - 1] = percentage;
+        }
       } else {
         _input += value;
       }
@@ -124,5 +164,11 @@ class CalculatorScreenState extends State<CalculatorScreen> {
 
   bool _isOperator(String value) {
     return value == '+' || value == '-' || value == '*' || value == '/';
+  }
+
+  void _handleUndo() {
+    setState(() {
+      _calculator.undo();
+    });
   }
 }

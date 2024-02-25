@@ -6,6 +6,7 @@ import 'command.dart';
 
 class OperationCommand implements Command {
   final String operator;
+  double? previousValue;
 
   OperationCommand(this.operator);
 
@@ -13,4 +14,14 @@ class OperationCommand implements Command {
   void execute(StackCalculator calculator) {
     calculator.calculateResult(operator);
   }
+
+  @override
+  void undo(StackCalculator calculator) {
+    // Undo the operation
+    if (previousValue != null) {
+      calculator.stack.removeLast(); // Remove the result
+      calculator.stack.add(previousValue!); // Restore the previous value
+    }
+  }
 }
+

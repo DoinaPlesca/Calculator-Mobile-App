@@ -5,4 +5,5 @@ import 'package:calculator/stack_calculator.dart';
 
 abstract class Command {
   void execute(StackCalculator calculator);
+  void undo(StackCalculator calculator);
 }
