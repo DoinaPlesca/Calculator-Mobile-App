@@ -85,8 +85,9 @@ class StackCalculator {
 
   void square() {
     if (stack.isNotEmpty) {
-      double value = stack.removeLast();
-      stack.add(value * value);
+      double number = stack.last;
+      double squared = number * number;
+      stack[stack.length - 1] = squared;
     }
   }
 }

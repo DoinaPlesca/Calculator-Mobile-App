@@ -43,7 +43,6 @@ class CalculatorScreenState extends State<CalculatorScreen> {
     );
   }
 
-
   Widget _buildDisplayArea() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -65,8 +64,6 @@ class CalculatorScreenState extends State<CalculatorScreen> {
       ),
     );
   }
-
-
 
   Widget _buildButtonGrid() {
     return GridView.count(
@@ -103,11 +100,9 @@ class CalculatorScreenState extends State<CalculatorScreen> {
     return _buildButton('Enter');
   }
 
-
   Widget _buildUndoButton() {
     return _buildButton('Undo');
   }
-
 
   Widget _buildButton(String value) {
     Color? buttonColor;
@@ -132,7 +127,6 @@ class CalculatorScreenState extends State<CalculatorScreen> {
     );
   }
 
-
   Color? _getButtonColor(String value) {
     if (value == 'Enter') {
       return Colors.orange;
@@ -150,14 +144,12 @@ class CalculatorScreenState extends State<CalculatorScreen> {
     return Colors.grey[300];
   }
 
-
   Color _getTextColor(String value) {
     if (value == 'C') {
       return Colors.red;
     }
     return Colors.black;
   }
-
 
   void _handleButtonPress(String value) {
     setState(() {
@@ -169,12 +161,19 @@ class CalculatorScreenState extends State<CalculatorScreen> {
         _handleClear();
       } else if (value == '%') {
         _handlePercentage();
+      } else if (value == 'x²') {
+        _handleSquare();
       } else {
         _handleNumber(value);
       }
     });
   }
 
+  void _handleSquare() {
+    setState(() {
+      _calculator.square();
+    });
+  }
 
   void _handleEnter() {
     if (_input.isNotEmpty) {
@@ -184,12 +183,10 @@ class CalculatorScreenState extends State<CalculatorScreen> {
     }
   }
 
-
   void _handleClear() {
     _calculator.clear();
     _input = '';
   }
-
 
   void _handlePercentage() {
     if (_calculator.stack.isNotEmpty) {
@@ -198,11 +195,9 @@ class CalculatorScreenState extends State<CalculatorScreen> {
     }
   }
 
-
   void _handleNumber(String value) {
     _input += value;
   }
-
 
   bool _isOperator(String value) {
     return value == '+' || value == '-' || value == '*' || value == '/';
