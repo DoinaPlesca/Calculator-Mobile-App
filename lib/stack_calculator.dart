@@ -82,6 +82,7 @@ class StackCalculator {
       lastCommand.undo(this);
     }
   }
+
   void square() {
     if (stack.isNotEmpty) {
       double value = stack.removeLast();

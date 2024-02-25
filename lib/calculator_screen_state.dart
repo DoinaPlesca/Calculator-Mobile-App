@@ -19,45 +19,54 @@ class CalculatorScreenState extends State<CalculatorScreen> {
       appBar: AppBar(
         title: const Text('Calculator'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Expanded(
-              flex: 2,
-              child: _buildDisplayArea(),
-            ),
-            const SizedBox(height: 20),
-            Expanded(
-              flex: 3,
-              child: _buildButtonGrid(),
-            ),
-          ],
-        ),
+      body: _buildBody(),
+    );
+  }
+
+  Widget _buildBody() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Expanded(
+            flex: 2,
+            child: _buildDisplayArea(),
+          ),
+          const SizedBox(height: 20),
+          Expanded(
+            flex: 3,
+            child: _buildButtonGrid(),
+          ),
+        ],
       ),
     );
   }
+
 
   Widget _buildDisplayArea() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          'Input: $_input',
-          textAlign: TextAlign.right,
-          style: const TextStyle(
-              fontSize: 23.0, color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        Text(
-          'Stack: ${_calculator.stackToString()}',
-          textAlign: TextAlign.right,
-          style: const TextStyle(
-              fontSize: 23.0, color: Colors.white, fontWeight: FontWeight.bold),
-        ),
+        _buildDisplayText('Input: $_input'),
+        _buildDisplayText('Stack: ${_calculator.stackToString()}'),
       ],
     );
   }
+
+  Widget _buildDisplayText(String text) {
+    return Text(
+      text,
+      textAlign: TextAlign.right,
+      style: const TextStyle(
+        fontSize: 23.0,
+        color: Colors.white,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
+
 
   Widget _buildButtonGrid() {
     return GridView.count(
@@ -67,7 +76,7 @@ class CalculatorScreenState extends State<CalculatorScreen> {
       mainAxisSpacing: 8.0,
       children: [
         _buildButton('C'),
-        _buildButton('x2'),
+        _buildButton('x²'),
         _buildButton('%'),
         _buildButton('/'),
         _buildButton('7'),
@@ -94,38 +103,23 @@ class CalculatorScreenState extends State<CalculatorScreen> {
     return _buildButton('Enter');
   }
 
+
   Widget _buildUndoButton() {
     return _buildButton('Undo');
   }
 
+
   Widget _buildButton(String value) {
     Color? buttonColor;
-    buttonColor = Colors.grey[300];
+    buttonColor = _getButtonColor(value);
 
-    Color textColor = Colors.black;
-    if (value == 'C') {
-      textColor = Colors.red;
-    }
-
-    if (value == 'Enter') {
-      buttonColor = Colors.orange;
-    } else if (value == 'C' ||
-        value == '%' ||
-        value == 'x2' ||
-        value == '/' ||
-        value == '+' ||
-        value == '-' ||
-        value == '*' ||
-        value == '.' ||
-        value == 'Undo') {
-      buttonColor = Colors.grey[700];
-    }
+    Color textColor = _getTextColor(value);
 
     return MaterialButton(
       onPressed: () {
         if (value == 'Undo') {
           _handleUndo();
-        }else {
+        } else {
           _handleButtonPress(value);
         }
       },
@@ -138,29 +132,77 @@ class CalculatorScreenState extends State<CalculatorScreen> {
     );
   }
 
+
+  Color? _getButtonColor(String value) {
+    if (value == 'Enter') {
+      return Colors.orange;
+    } else if (value == 'C' ||
+        value == '%' ||
+        value == 'x²' ||
+        value == '/' ||
+        value == '+' ||
+        value == '-' ||
+        value == '*' ||
+        value == '.' ||
+        value == 'Undo') {
+      return Colors.grey[700];
+    }
+    return Colors.grey[300];
+  }
+
+
+  Color _getTextColor(String value) {
+    if (value == 'C') {
+      return Colors.red;
+    }
+    return Colors.black;
+  }
+
+
   void _handleButtonPress(String value) {
     setState(() {
       if (_isOperator(value)) {
         _calculator.execute(OperationCommand(value));
       } else if (value == 'Enter') {
-        if (_input.isNotEmpty) {
-          double inputValue = double.parse(_input);
-          _calculator.execute(PushCommand(inputValue));
-          _input = '';
-        }
+        _handleEnter();
       } else if (value == 'C') {
-        _calculator.clear();
-        _input = '';
+        _handleClear();
       } else if (value == '%') {
-        if (_calculator.stack.isNotEmpty) {
-          double percentage = _calculator.stack.last / 100;
-          _calculator.stack[_calculator.stack.length - 1] = percentage;
-        }
+        _handlePercentage();
       } else {
-        _input += value;
+        _handleNumber(value);
       }
     });
   }
+
+
+  void _handleEnter() {
+    if (_input.isNotEmpty) {
+      double inputValue = double.parse(_input);
+      _calculator.execute(PushCommand(inputValue));
+      _input = '';
+    }
+  }
+
+
+  void _handleClear() {
+    _calculator.clear();
+    _input = '';
+  }
+
+
+  void _handlePercentage() {
+    if (_calculator.stack.isNotEmpty) {
+      double percentage = _calculator.stack.last / 100;
+      _calculator.stack[_calculator.stack.length - 1] = percentage;
+    }
+  }
+
+
+  void _handleNumber(String value) {
+    _input += value;
+  }
+
 
   bool _isOperator(String value) {
     return value == '+' || value == '-' || value == '*' || value == '/';

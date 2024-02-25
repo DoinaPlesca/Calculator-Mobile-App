@@ -17,10 +17,9 @@ class OperationCommand implements Command {
 
   @override
   void undo(StackCalculator calculator) {
-    // Undo the operation
     if (previousValue != null) {
-      calculator.stack.removeLast(); // Remove the result
-      calculator.stack.add(previousValue!); // Restore the previous value
+      calculator.stack.removeLast();
+      calculator.stack.add(previousValue!);
     }
   }
 }

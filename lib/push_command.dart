@@ -18,6 +18,6 @@ class PushCommand implements Command {
   @override
   void undo(StackCalculator calculator) {
 
-    calculator.stack.removeLast(); // Remove the pushed value
+    calculator.stack.removeLast(); /// Remove the pushed value
   }
 }

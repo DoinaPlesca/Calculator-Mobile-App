@@ -13,9 +13,9 @@ class CalculatorApp extends StatelessWidget {
       title: 'Calculator',
       theme: ThemeData(
         primarySwatch: Colors.grey,
-        scaffoldBackgroundColor: Colors.black, // Set background color to black
+        scaffoldBackgroundColor: Colors.black,
         textTheme: const TextTheme(
-          bodyText1: TextStyle(color: Colors.white), // Set text color to white
+          bodyText1: TextStyle(color: Colors.white),
         ),
       ),
       home: const CalculatorScreen(),
