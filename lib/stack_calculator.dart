@@ -76,13 +76,16 @@ class StackCalculator {
     return stack.join(' ');
   }
 
+  /// Remove the last command from the command history
   void undo() {
     if (commandHistory.isNotEmpty) {
       Command lastCommand = commandHistory.removeLast();
       lastCommand.undo(this);
     }
   }
-
+  /// Get the last number in the stack
+  /// Calculate the square of the number
+  /// Replace the last number in the stack with its square
   void square() {
     if (stack.isNotEmpty) {
       double number = stack.last;
