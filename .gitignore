@@ -66,3 +66,8 @@ doc/api/
 *.js.deps
 *.js.map
 
+
+# Chromedriver
+chromedriver-*/
+chromedriver*
+LICENSE.chromedriver
