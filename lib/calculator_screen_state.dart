@@ -122,7 +122,7 @@ class CalculatorScreenState extends State<CalculatorScreen> {
       textColor: textColor,
       child: Text(
         value,
-        style: const TextStyle(fontSize: 21.0),
+        style: const TextStyle(fontSize: 20.0),
       ),
     );
   }
