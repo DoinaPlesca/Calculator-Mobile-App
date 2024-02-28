@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+
 import 'command.dart';
 
 /// class provides a calculator functionality with stack-based operations.
@@ -35,7 +35,7 @@ class StackCalculator {
       stack.add(result);
       return result;
     }
-    return 0; // Default return value if calculation is not possible
+    return 0;
   }
 
   /// Performs the calculation based on the given operator and operands.

@@ -4,20 +4,18 @@ import 'command.dart';
 
 class PushCommand implements Command {
   final double value;
+  late int indexOfValue;
 
   PushCommand(this.value);
 
-  ///Push the value onto the stack
   @override
   void execute(StackCalculator calculator) {
-
     calculator.push(value);
+    indexOfValue = calculator.stack.length - 1;
   }
 
-  ///Undo the push operation
   @override
   void undo(StackCalculator calculator) {
-
-    calculator.stack.removeLast(); /// Remove the pushed value
+    calculator.stack.removeAt(indexOfValue); // Remove the pushed value at the stored index
   }
 }

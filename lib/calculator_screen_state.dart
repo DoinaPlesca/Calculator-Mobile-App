@@ -13,6 +13,8 @@ class CalculatorScreenState extends State<CalculatorScreen> {
   final StackCalculator _calculator = StackCalculator();
   String _input = '';
 
+  StackCalculator get calculator => _calculator;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
